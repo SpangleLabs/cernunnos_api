@@ -1,47 +1,39 @@
+"use strict";
 var express = require("express");
 var Tasks = require("../models/tasks.js");
-var Promise = require("promise");
-var router = express.Router();
+var router = new express.Router();
 
-/* GET species listing. */
-router.get("/:id?", function(req, res, next) {
-    if(req.params.id) {
-        Tasks.getTasksById(req.params.id).catch(function(err) {
+/* GET tasks */
+router.get("/:id?", function (req, res, next) {
+    if (req.params.id) {
+        Tasks.getTasksById(req.params.id).catch(function (err) {
             res.json(err);
-        }).then(function(rows) {
-            var speciesZoos = [];
-            for(var a = 0; a < rows.length; a++) {
-                speciesZoos.push(Zoos.getZoosBySpeciesId(rows[a].species_id));
+        }).then(function (rows) {
+            if (rows.length === 0) {
+                res.err(404);
+            } else {
+                var row_result = {};
+                row_result.species_id = rows[0].species_id;
+                row_result.common_name = rows[0].common_name;
+                row_result.latin_name = rows[0].latin_name;
+                row_result.category_id = rows[0].category_id;
+                res.json(row_result);
             }
-            Promise.all(speciesZoos).catch(function(err) {
-                res.json(err);
-            }).then(function(values) {
-                var data = [];
-                for(var b = 0; b < rows.length; b++) {
-                    var row_result = {};
-                    row_result.species_id = rows[b].species_id;
-                    row_result.common_name = rows[b].common_name;
-                    row_result.latin_name = rows[b].latin_name;
-                    row_result.category_id = rows[b].category_id;
-                    row_result.zoos = values[b];
-                    data.push(row_result);
-                }
-                res.json(data);
-            });
         });
     } else {
-        Tasks.getAllTasks().catch(function(err) {
+        Tasks.getAllTasks().catch(function (err) {
             res.json(err);
-        }).then(function(rows) {
+        }).then(function (rows) {
             res.json(rows);
         });
     }
 });
 
-router.post("/", function(req, res, next) {
-    Tasks.addTask(req.body).catch(function(err) {
+/* add new task */
+router.post("/", function (req, res, next) {
+    Tasks.addTask(req.body).catch(function (err) {
         res.json(err);
-    }).then(function(count) {
+    }).then(function (count) {
         res.json(req.body);
     });
 });
