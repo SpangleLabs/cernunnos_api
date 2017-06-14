@@ -1,6 +1,6 @@
-var express = require('express');
-var Categories = require("../models/Categories.js");
-var Species = require("../models/Species.js");
+var express = require("express");
+var Categories = require("../models/categories.js");
+var Species = require("../models/tasks.js");
 var Promise = require("promise");
 var router = express.Router();
 
@@ -39,7 +39,7 @@ function add_subcategories_and_return(res, rows) {
 }
 
 /* GET categories listing. */
-router.get('/:id?', function(req, res, next) {
+router.get("/:id?", function(req, res, next) {
     if(req.params.id) {
         Categories.getCategoryById(req.params.id).catch(function(err) {
             res.json(err);
@@ -55,7 +55,7 @@ router.get('/:id?', function(req, res, next) {
     }
 });
 
-router.post('/', function(req, res, next) {
+router.post("/", function(req, res, next) {
     Categories.addCategory(req.body).catch(function(err) {
         res.json(err);
     }).then(function(count) {

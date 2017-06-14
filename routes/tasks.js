@@ -1,13 +1,12 @@
-var express = require('express');
-var Species = require("../models/Species.js");
-var Zoos = require("../models/Zoos.js");
+var express = require("express");
+var Tasks = require("../models/tasks.js");
 var Promise = require("promise");
 var router = express.Router();
 
 /* GET species listing. */
-router.get('/:id?', function(req, res, next) {
+router.get("/:id?", function(req, res, next) {
     if(req.params.id) {
-        Species.getSpeciesById(req.params.id).catch(function(err) {
+        Tasks.getTasksById(req.params.id).catch(function(err) {
             res.json(err);
         }).then(function(rows) {
             var speciesZoos = [];
@@ -31,7 +30,7 @@ router.get('/:id?', function(req, res, next) {
             });
         });
     } else {
-        Species.getAllSpecies().catch(function(err) {
+        Tasks.getAllTasks().catch(function(err) {
             res.json(err);
         }).then(function(rows) {
             res.json(rows);
@@ -39,8 +38,8 @@ router.get('/:id?', function(req, res, next) {
     }
 });
 
-router.post('/', function(req, res, next) {
-    Species.addSpecies(req.body).catch(function(err) {
+router.post("/", function(req, res, next) {
+    Tasks.addTask(req.body).catch(function(err) {
         res.json(err);
     }).then(function(count) {
         res.json(req.body);
