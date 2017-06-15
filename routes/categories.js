@@ -4,37 +4,37 @@ var Tasks = require("../models/tasks.js");
 var Promise = require("promise");
 var router = new express.Router();
 
-function add_subcategories_and_return(res, rows) {
-    var subcategory_promises = [];
-    var species_promises = [];
+function addSubcategoriesAndReturn(res, rows) {
+    var subcategoryPromises = [];
+    var taskPromises = [];
     rows.forEach(function (row) {
-        var category_id = row.category_id;
-        subcategory_promises.push(Categories.getCategoriesByParentId(category_id).catch(function (err) {
+        var categoryId = row.category_id;
+        subcategoryPromises.push(Categories.getCategoriesByParentId(categoryId).catch(function (err) {
             res.json(err);
-        }).then(function (sub_rows) {
-            return sub_rows;
+        }).then(function (subRows) {
+            return subRows;
         }));
-        species_promises.push(Tasks.getTasksByCategoryId(category_id).catch(function (err) {
+        taskPromises.push(Tasks.getTasksByCategoryId(categoryId).catch(function (err) {
             res.json(err);
-        }).then(function (species) {
-            return species;
+        }).then(function (tasks) {
+            return tasks;
         }));
     });
-    Promise.all(subcategory_promises.concat(species_promises)).catch(function (err) {
+    Promise.all(subcategoryPromises.concat(taskPromises)).catch(function (err) {
         res.json(err);
     }).then(function (values) {
-        var row_results = [];
+        var rowResults = [];
         rows.forEach(function (row, i) {
-            var row_result = {};
-            row_result.category_id = row.category_id;
-            row_result.name = row.name;
-            row_result.category_level_id = row.category_level_id;
-            row_result.parent_category_id = row.parent_category_id;
-            row_result.sub_categories = values[i];
-            row_result.species = values[i + rows.length]; // I don't know if this is nightmares.
-            row_results.push(row_result);
+            var rowResult = {};
+            rowResult.category_id = row.category_id;
+            rowResult.name = row.name;
+            rowResult.category_level_id = row.category_level_id;
+            rowResult.parent_category_id = row.parent_category_id;
+            rowResult.sub_categories = values[i];
+            rowResult.species = values[i + rows.length]; // I don't know if this is nightmares.
+            rowResults.push(rowResult);
         });
-        res.json(row_results);
+        res.json(rowResults);
     });
 }
 
@@ -44,13 +44,13 @@ router.get("/:id?", function (req, res, next) {
         Categories.getCategoryById(req.params.id).catch(function (err) {
             res.json(err);
         }).then(function (rows) {
-            add_subcategories_and_return(res, rows);
+            addSubcategoriesAndReturn(res, rows);
         });
     } else {
         Categories.getBaseCategories().catch(function (err) {
             res.json(err);
         }).then(function (rows) {
-            add_subcategories_and_return(res, rows);
+            addSubcategoriesAndReturn(res, rows);
         });
     }
 });

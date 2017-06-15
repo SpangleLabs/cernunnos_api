@@ -12,12 +12,14 @@ router.get("/:id?", function (req, res, next) {
             if (rows.length === 0) {
                 res.err(404);
             } else {
-                var row_result = {};
-                row_result.species_id = rows[0].species_id;
-                row_result.common_name = rows[0].common_name;
-                row_result.latin_name = rows[0].latin_name;
-                row_result.category_id = rows[0].category_id;
-                res.json(row_result);
+                rows.forEach(function (row) {
+                    var rowResult = {};
+                    rowResult.species_id = row.species_id;
+                    rowResult.common_name = row.common_name;
+                    rowResult.latin_name = row.latin_name;
+                    rowResult.category_id = row.category_id;
+                    res.json(rowResult);
+                });
             }
         });
     } else {
