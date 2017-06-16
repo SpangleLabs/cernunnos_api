@@ -14,9 +14,8 @@ router.get("/:id?", function (req, res, next) {
             } else {
                 rows.forEach(function (row) {
                     var rowResult = {};
-                    rowResult.species_id = row.species_id;
-                    rowResult.common_name = row.common_name;
-                    rowResult.latin_name = row.latin_name;
+                    rowResult.task_id = row.task_id;
+                    rowResult.name = row.name;
                     rowResult.category_id = row.category_id;
                     res.json(rowResult);
                 });

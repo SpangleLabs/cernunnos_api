@@ -28,10 +28,9 @@ function addSubcategoriesAndReturn(res, rows) {
             var rowResult = {};
             rowResult.category_id = row.category_id;
             rowResult.name = row.name;
-            rowResult.category_level_id = row.category_level_id;
             rowResult.parent_category_id = row.parent_category_id;
             rowResult.sub_categories = values[i];
-            rowResult.species = values[i + rows.length]; // I don't know if this is nightmares.
+            rowResult.tasks = values[i + rows.length]; // I don't know if this is nightmares.
             rowResults.push(rowResult);
         });
         res.json(rowResults);
